@@ -1,0 +1,5 @@
+{
+    "api_url": "YOUR_API_URL_HERE(e.g., https://api.openai.com/v1)",
+    "api_key": "YOUR_API_KEY_HERE",
+    "model_name": "YOUR_MODEL_NAME_HERE"
+}

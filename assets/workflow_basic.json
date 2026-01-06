@@ -1,0 +1,607 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "revision": 0,
+  "last_node_id": 47,
+  "last_link_id": 65,
+  "nodes": [
+    {
+      "id": 8,
+      "type": "VAEDecode",
+      "pos": [
+        1750.605289686558,
+        854.0272510621774
+      ],
+      "size": [
+        140,
+        46
+      ],
+      "flags": {},
+      "order": 9,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples",
+          "type": "LATENT",
+          "link": 16
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 17
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            30
+          ]
+        }
+      ],
+      "title": "VAE解码",
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.7.0",
+        "Node name for S&R": "VAEDecode"
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 4,
+      "type": "CheckpointLoaderSimple",
+      "pos": [
+        -59.15078973758028,
+        846.9041663419262
+      ],
+      "size": [
+        270,
+        98
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "MODEL",
+          "type": "MODEL",
+          "links": [
+            57
+          ]
+        },
+        {
+          "name": "CLIP",
+          "type": "CLIP",
+          "links": [
+            56,
+            59
+          ]
+        },
+        {
+          "name": "VAE",
+          "type": "VAE",
+          "links": [
+            17
+          ]
+        }
+      ],
+      "title": "Checkpoint加载器(简易)",
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.7.0",
+        "Node name for S&R": "CheckpointLoaderSimple"
+      },
+      "widgets_values": [
+        "novaAnimeXL_ilV150.safetensors"
+      ]
+    },
+    {
+      "id": 3,
+      "type": "KSampler",
+      "pos": [
+        1399.818624974814,
+        847.8440794075784
+      ],
+      "size": [
+        270,
+        262
+      ],
+      "flags": {},
+      "order": 8,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 57
+        },
+        {
+          "name": "positive",
+          "type": "CONDITIONING",
+          "link": 60
+        },
+        {
+          "name": "negative",
+          "type": "CONDITIONING",
+          "link": 13
+        },
+        {
+          "name": "latent_image",
+          "type": "LATENT",
+          "link": 14
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            16
+          ]
+        }
+      ],
+      "title": "K采样器",
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.7.0",
+        "Node name for S&R": "KSampler"
+      },
+      "widgets_values": [
+        1,
+        "fixed",
+        28,
+        5.5,
+        "euler_ancestral",
+        "karras",
+        1
+      ]
+    },
+    {
+      "id": 46,
+      "type": "PreviewAny",
+      "pos": [
+        462.90272761433175,
+        317.39119441895247
+      ],
+      "size": [
+        322.7926498475001,
+        151.74089505306682
+      ],
+      "flags": {},
+      "order": 6,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "source",
+          "type": "*",
+          "link": 64
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.7.0",
+        "Node name for S&R": "PreviewAny"
+      },
+      "widgets_values": [
+        null,
+        null,
+        null
+      ]
+    },
+    {
+      "id": 47,
+      "type": "PreviewAny",
+      "pos": [
+        458.54649703877885,
+        513.0380946594391
+      ],
+      "size": [
+        339.38844655017056,
+        139.07513366209696
+      ],
+      "flags": {},
+      "order": 7,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "source",
+          "type": "*",
+          "link": 65
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.7.0",
+        "Node name for S&R": "PreviewAny"
+      },
+      "widgets_values": [
+        null,
+        null,
+        null
+      ]
+    },
+    {
+      "id": 45,
+      "type": "PreviewAny",
+      "pos": [
+        465.57768598634914,
+        107.42961138406133
+      ],
+      "size": [
+        310.7608096003728,
+        156.64583746671155
+      ],
+      "flags": {},
+      "order": 4,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "source",
+          "type": "*",
+          "link": 63
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.7.0",
+        "Node name for S&R": "PreviewAny"
+      },
+      "widgets_values": [
+        null,
+        null,
+        false
+      ]
+    },
+    {
+      "id": 41,
+      "type": "PersonaDirector",
+      "pos": [
+        52.36070889644287,
+        200.81870946570933
+      ],
+      "size": [
+        310.6808226773908,
+        392.91046393170166
+      ],
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "final_prompt",
+          "type": "STRING",
+          "links": [
+            61,
+            63
+          ]
+        },
+        {
+          "name": "negative_prompt",
+          "type": "STRING",
+          "links": [
+            62,
+            64
+          ]
+        },
+        {
+          "name": "debug_state",
+          "type": "STRING",
+          "links": [
+            65
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "PersonaDirector"
+      },
+      "widgets_values": [
+        "Create New (Smart)",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "id": 33,
+      "type": "SaveImage",
+      "pos": [
+        832.6190639218204,
+        131.6801193993645
+      ],
+      "size": [
+        525.3086230768822,
+        481.52378353242466
+      ],
+      "flags": {},
+      "order": 10,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 30
+        }
+      ],
+      "outputs": [],
+      "title": "保存图像",
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.7.0"
+      },
+      "widgets_values": [
+        "ComfyUI"
+      ]
+    },
+    {
+      "id": 44,
+      "type": "CLIPTextEncode",
+      "pos": [
+        593.1121873651971,
+        828.390480316712
+      ],
+      "size": [
+        400,
+        200
+      ],
+      "flags": {
+        "collapsed": true
+      },
+      "order": 3,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": 59
+        },
+        {
+          "name": "text",
+          "type": "STRING",
+          "widget": {
+            "name": "text"
+          },
+          "link": 61
+        }
+      ],
+      "outputs": [
+        {
+          "name": "CONDITIONING",
+          "type": "CONDITIONING",
+          "links": [
+            60
+          ]
+        }
+      ],
+      "title": "CLIP文本编码器",
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.7.0",
+        "Node name for S&R": "CLIPTextEncode"
+      },
+      "widgets_values": [
+        ""
+      ]
+    },
+    {
+      "id": 7,
+      "type": "CLIPTextEncode",
+      "pos": [
+        591.7974073461467,
+        937.6558712197739
+      ],
+      "size": [
+        400,
+        200
+      ],
+      "flags": {
+        "collapsed": true
+      },
+      "order": 5,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": 56
+        },
+        {
+          "name": "text",
+          "type": "STRING",
+          "widget": {
+            "name": "text"
+          },
+          "link": 62
+        }
+      ],
+      "outputs": [
+        {
+          "name": "CONDITIONING",
+          "type": "CONDITIONING",
+          "links": [
+            13
+          ]
+        }
+      ],
+      "title": "CLIP文本编码器",
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.7.0",
+        "Node name for S&R": "CLIPTextEncode"
+      },
+      "widgets_values": [
+        ""
+      ]
+    },
+    {
+      "id": 19,
+      "type": "EmptyLatentImage",
+      "pos": [
+        874.7539702867045,
+        977.8641086811701
+      ],
+      "size": [
+        270,
+        106
+      ],
+      "flags": {},
+      "order": 2,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            14
+          ]
+        }
+      ],
+      "title": "空Latent",
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.7.0",
+        "Node name for S&R": "EmptyLatentImage"
+      },
+      "widgets_values": [
+        1024,
+        1024,
+        1
+      ]
+    }
+  ],
+  "links": [
+    [
+      13,
+      7,
+      0,
+      3,
+      2,
+      "CONDITIONING"
+    ],
+    [
+      14,
+      19,
+      0,
+      3,
+      3,
+      "LATENT"
+    ],
+    [
+      16,
+      3,
+      0,
+      8,
+      0,
+      "LATENT"
+    ],
+    [
+      17,
+      4,
+      2,
+      8,
+      1,
+      "VAE"
+    ],
+    [
+      30,
+      8,
+      0,
+      33,
+      0,
+      "IMAGE"
+    ],
+    [
+      56,
+      4,
+      1,
+      7,
+      0,
+      "CLIP"
+    ],
+    [
+      57,
+      4,
+      0,
+      3,
+      0,
+      "MODEL"
+    ],
+    [
+      59,
+      4,
+      1,
+      44,
+      0,
+      "CLIP"
+    ],
+    [
+      60,
+      44,
+      0,
+      3,
+      1,
+      "CONDITIONING"
+    ],
+    [
+      61,
+      41,
+      0,
+      44,
+      1,
+      "STRING"
+    ],
+    [
+      62,
+      41,
+      1,
+      7,
+      1,
+      "STRING"
+    ],
+    [
+      63,
+      41,
+      0,
+      45,
+      0,
+      "STRING"
+    ],
+    [
+      64,
+      41,
+      1,
+      46,
+      0,
+      "STRING"
+    ],
+    [
+      65,
+      41,
+      2,
+      47,
+      0,
+      "STRING"
+    ]
+  ],
+  "groups": [],
+  "config": {},
+  "extra": {
+    "ds": {
+      "scale": 0.9090909090909091,
+      "offset": [
+        66.06662597656248,
+        -225.64996948242185
+      ]
+    },
+    "frontendVersion": "1.35.9",
+    "workflowRendererVersion": "LG"
+  },
+  "version": 0.4
+}
