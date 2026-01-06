@@ -12,7 +12,7 @@
 
 **Watch consistency in action.** *(The character identity and outfit persist perfectly while the pose changes.)*
 
-![Demo GIF](./assets/demo.gif)
+![Demo GIF](assets/demo.gif)
 
 > **"She takes off the hat."** > — The Agent intelligently removes the `straw hat` from the outfit list, but keeps the `white sundress` and character identity exactly the same.
 
@@ -85,9 +85,9 @@ In standard Stable Diffusion workflows, changing a prompt often changes the enti
 **Get started immediately!** Download the image below (Save As...), then **drag and drop it directly into ComfyUI**.  
 It contains the full node setup and metadata.
 
-<img src="./assets/workflow_basic.png" width="600" alt="Basic Workflow">
+<img src="assets/workflow_basic.png" width="600" alt="Basic Workflow">
 
-> **Alternative**: If the image doesn't load, you can download the [Raw Workflow JSON here](./assets/workflow_basic.json) and load it manually.
+> **Alternative**: If the image doesn't load, you can download the [Raw Workflow JSON here](assets/workflow_basic.json) and load it manually.
 
 *(Note: Ensure you have set up your `config.json` before running)*
 
