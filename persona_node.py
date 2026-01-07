@@ -3,11 +3,15 @@ import json
 import re
 import shutil
 from openai import OpenAI
+from .utils import load_prompt, robust_json_parse
 
 # Define the directory for storing persona cards
 PERSONA_DIR = os.path.join(os.path.dirname(__file__), "personas")
 if not os.path.exists(PERSONA_DIR):
     os.makedirs(PERSONA_DIR)
+PROMPTCONFIGS_DIR = os.path.join(os.path.dirname(__file__), "configs")
+if not os.path.exists(PROMPTCONFIGS_DIR):
+    os.makedirs(PROMPTCONFIGS_DIR)
 
 class PersonaDirectorNode:
     def __init__(self):
@@ -17,9 +21,10 @@ class PersonaDirectorNode:
     def INPUT_TYPES(s):
         # 1. Scan the directory for existing JSON files
         files = [f for f in os.listdir(PERSONA_DIR) if f.endswith(".json")]
+        promptconfiggfiles = [f for f in os.listdir(PROMPTCONFIGS_DIR) if f.endswith(".json")]
         # 2. Add the "Create New" option at the top
         selector_options = ["Create New (Smart)", "Force Reset (Overwrite)"] + files
-
+        config_options = promptconfiggfiles
         return {
             "required": {
                 # [1] Persona Selector: Replaces the Mode switch
@@ -38,6 +43,7 @@ class PersonaDirectorNode:
                     "placeholder": "Describe the character (if new) or the change (if existing)..."
                 }),
                 
+                "promptconfig": (config_options, ),
                 # [4] API Configuration
                 "api_url": ("STRING", {"default": "","placeholder": "Leave empty to use config.json"}),
                 "api_key": ("STRING", {"default": "","placeholder": "Leave empty to use config.json"}),
@@ -50,28 +56,8 @@ class PersonaDirectorNode:
     FUNCTION = "generate_prompt"
     CATEGORY = "Persona Director"
 
-    def robust_json_parse(self, raw_content):
-        """
-        Robustly extracts and parses JSON from the LLM response.
-        Handles Markdown code blocks and prefixes.
-        """
-        try:
-            return json.loads(raw_content.strip())
-        except:
-            pass
 
-        # Regex to find the first JSON object { ... }
-        match = re.search(r'(\{.*\})', raw_content, re.DOTALL)
-        if match:
-            clean_json = match.group(1)
-            try:
-                return json.loads(clean_json)
-            except Exception as e:
-                print(f"[Error] JSON Regex extraction failed: {e}")
-        
-        return None
-
-    def generate_prompt(self, persona_selector, new_persona_name, user_instruction, api_url, api_key, model_name):
+    def generate_prompt(self, persona_selector, new_persona_name, user_instruction, promptconfig, api_url, api_key, model_name):
         
         # --- State Management Logic ---
         
@@ -171,65 +157,8 @@ class PersonaDirectorNode:
 
         # --- System Prompt Construction ---
         # Defines the strict JSON schema for the LLM
-        system_prompt = """
-        You are an expert AI Director for Stable Diffusion XL.
-        You manage a structured state of a character and generate image prompts.
-
-        YOUR GOAL:
-        1. Update the JSON state based on the User Instruction.
-        2. Generate a flat string prompt optimized for Danbooru/SDXL tagging.
-        IMPORTANT: You must use chain of thought before updating the state. 
-        Old tags often conflict with new instructions. You must act as a "Cleanup Crew".
-
-        JSON STATE STRUCTURE:
-        {
-            "reasoning": "Step-by-step logic. Analyze what MUST be removed/added based on the new instruction.",
-            "character": "Identity tags. IF the character is a known/famous character (e.g., from Anime/Game), ONLY use their specific name tag (e.g., 'shirasu_azusa'). DO NOT describe hair/eyes unless the user explicitly asks to change them (Alt color). IF original character, describe full traits.",
-            "outfit": "Clothing, Accessories, Shoes. Updates as a complete set usually.",
-            "action": "Body Pose (standing, sitting), Gestures (hand on hip), Facial Expression (blush, smile).",
-            "location": "Environment (bedroom, beach), Lighting (sunset, cinematic light), Weather.",
-            "composition": "Camera Framing (cowboy shot, full body, portrait), Camera Angle (from below, dutch angle), Gaze (looking at viewer).",
-            "style": "Art Direction (anime style, monochrome, oil painting, pixel art, cel shading). NOT quality tags.",
-            "meta": "Technical Quality Tags. (highres, masterpiece, best quality).",
-        }
-
-        RULES:
-        1. If this is a NEW character, populate fields based on the instruction.
-        2. If this is an EXISTING character, ONLY update the specific fields mentioned in the instruction.
-           - Example: If instruction is "change to maid outfit", update 'outfit' but KEEP 'character' exactly as is.
-           - Example: If instruction is "running on beach", update 'action' and 'location'.
-        LOGIC RULES:
-        1. **Conflict Resolution**: 
-           - If user says "focus on feet", you MUST REMOVE 'full body', 'upper body', 'looking at viewer'.
-           
-        2. **Nudity Logic**: 
-           - 'completely nude' means wearing NOTHING.
-           - If user adds ANY item (e.g., "wear socks"), you MUST REMOVE 'completely nude'.
-           
-        3. **Anti-Redundancy**:
-           - Do NOT output "black thighhighs, black stockings". Just use "black thighhighs".
-
-        4. **Negative Inference**: 
-           - Based on the current state, infer what should NOT be in the image.
-           - E.g., if 'beach', negative='indoors'. if 'nude', negative='clothes'.
-
-        5. **Famous Character Simplification (Trust the Model)**:
-           - If the user provides a specific name (e.g., "Hatsune Miku"), assume the image generator KNOWS this character.
-           - **ACTION**: Output ONLY the name tag (e.g., "hatsune_miku") (and '1girl'/'1boy').
-           - **FORBIDDEN**: Do NOT list hair color, eye color, or skin tone. This prevents hallucinations (e.g., mistakenly saying Miku has red hair).
-           - **EXCEPTION**: Only describe traits if the user is creating an Original Character (OC) or explicitly changing the look (e.g., "Black haired Miku").
         
-        6. **Tag injuection**:
-           - if the user provides specific tags (e.g., "tag:(long_hair)"), you MUST include the exact tag in the relevant fields.
-           - if the user provides specific character tag (e.g., "tag:(rem_(re:zero))"), you MUST use the exact tag (e.g., "rem_(re:zero)").
-        OUTPUT FORMAT:
-        You must return a single JSON object with two keys:
-        {
-            "updated_state": { ... the structure defined above ... },
-            "positive_prompt": "The final comma-separated string for image generation",
-            "negative_prompt": "Combine standard quality negatives + context-specific exclusions."
-        }
-        """
+        system_prompt = load_prompt(os.path.join(base_dir, PROMPTCONFIGS_DIR, promptconfig))
 
         # Prepare Context for LLM
         if is_new_creation:
@@ -256,7 +185,7 @@ class PersonaDirectorNode:
             if finish_reason == "content_filter":
                 raise RuntimeError("LLM refused to generate (Content Filter).")
             raw_content = response.choices[0].message.content
-            parsed_data = self.robust_json_parse(raw_content)
+            parsed_data = robust_json_parse(raw_content)
 
             if not parsed_data:
                 raise RuntimeError("Failed to parse LLM Response!\nRaw Content: {raw_content[:200]}...")
