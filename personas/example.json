@@ -2,17 +2,17 @@
     "updated_state": {
         "character": "1girl, pink hair, long hair",
         "outfit": "white sundress",
-        "action": "ordering, holding tropical drink, leaning on counter, relaxed expression, smile",
-        "location": "beach bar, bar counter, wooden interior, tropical, tiki bar, indoor, warm lighting, summer",
-        "composition": "upper body, from front",
+        "action": "standing, relaxed expression, smile",
+        "location": "beach, sand, ocean, blue sky, day, summer, tropical",
+        "composition": "full body, from front",
         "style": "anime style",
         "meta": "score_9, score_8_up, score_7_up, source_anime, masterpiece, best quality"
     },
     "inference_cache": {
-        "positive_prompt": "masterpiece, best quality, amazing quality, 4k, very aesthetic, high resolution, ultra-detailed, absurdres, newest, score_9, score_8_up, score_7_up, source_anime, anime style, 1girl, pink hair, long hair, white sundress, ordering, holding tropical drink, leaning on counter, relaxed expression, smile, beach bar, bar counter, wooden interior, tropical, tiki bar, indoor, warm lighting, summer, upper body, from front, depth of field, volumetric lighting",
-        "negative_prompt": "lowres, bad anatomy, bad hands, text, error, missing fingers, extra digit, fewer digits, cropped, worst quality, low quality, normal quality, jpeg artifacts, signature, watermark, username, blurry, nsfw, artist name, multiple girls"
+        "positive_prompt": "masterpiece, best quality, amazing quality, 4k, very aesthetic, high resolution, ultra-detailed, absurdres, newest, score_9, score_8_up, score_7_up, source_anime, anime style, full body, from front, 1girl, pink hair, long hair, relaxed expression, smile, standing, wearing white sundress, on beach, sand, ocean background, blue sky, day, summer, tropical, depth of field, volumetric lighting",
+        "negative_prompt": "modern, recent, old, oldest, cartoon, graphic, text, painting, crayon, graphite, abstract, glitch, deformed, mutated, ugly, disfigured, long body, lowres, bad anatomy, bad hands, missing fingers, extra digits, fewer digits, cropped, very displeasing, (worst quality, bad quality:1.2), sketch, jpeg artifacts, signature, watermark, username, simple background, conjoined, bad ai-generated, nsfw, error, extra digit, worst quality, low quality, normal quality, blurry, indoors, bar, counter, holding, drink, holding drink, bar counter, wooden interior, tiki bar"
     },
     "system_meta": {
-        "last_instruction": "no change"
+        "last_instruction": "让女孩回到沙滩上，不要饮料，也不要其他东西"
     }
 }
