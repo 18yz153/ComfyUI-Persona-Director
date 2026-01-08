@@ -39,3 +39,14 @@ def robust_json_parse(raw_content):
             print(f"[Error] JSON Regex extraction failed: {e}")
     
     return None
+
+def normalize_json(raw_data):
+    if "updated_state" in raw_data and "inference_cache" in raw_data and "system_meta" in raw_data:
+        return raw_data
+    if "character" in raw_data:
+        return {
+            "updated_state": raw_data, # 把整个包都塞进 state
+            "inference_cache": {},
+            "system_meta": {}
+        }
+    return {"updated_state": {}, "inference_cache": {}, "system_meta": {}}

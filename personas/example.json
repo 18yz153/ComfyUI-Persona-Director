@@ -1,9 +1,18 @@
 {
-    "character": "1girl, pink hair, long hair",
-    "outfit": "white sundress",
-    "action": "ordering, holding tropical drink, leaning on counter, relaxed expression, smile",
-    "location": "beach bar, bar counter, wooden interior, tropical, tiki bar, indoor, warm lighting, summer",
-    "composition": "upper body, from front",
-    "style": "anime style",
-    "meta": "score_9, score_8_up, score_7_up, source_anime, masterpiece, best quality"
+    "updated_state": {
+        "character": "1girl, pink hair, long hair",
+        "outfit": "white sundress",
+        "action": "ordering, holding tropical drink, leaning on counter, relaxed expression, smile",
+        "location": "beach bar, bar counter, wooden interior, tropical, tiki bar, indoor, warm lighting, summer",
+        "composition": "upper body, from front",
+        "style": "anime style",
+        "meta": "score_9, score_8_up, score_7_up, source_anime, masterpiece, best quality"
+    },
+    "inference_cache": {
+        "positive_prompt": "masterpiece, best quality, amazing quality, 4k, very aesthetic, high resolution, ultra-detailed, absurdres, newest, score_9, score_8_up, score_7_up, source_anime, anime style, 1girl, pink hair, long hair, white sundress, ordering, holding tropical drink, leaning on counter, relaxed expression, smile, beach bar, bar counter, wooden interior, tropical, tiki bar, indoor, warm lighting, summer, upper body, from front, depth of field, volumetric lighting",
+        "negative_prompt": "lowres, bad anatomy, bad hands, text, error, missing fingers, extra digit, fewer digits, cropped, worst quality, low quality, normal quality, jpeg artifacts, signature, watermark, username, blurry, nsfw, artist name, multiple girls"
+    },
+    "system_meta": {
+        "last_instruction": "no change"
+    }
 }
