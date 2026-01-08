@@ -37,6 +37,19 @@ In standard Stable Diffusion workflows, changing a prompt often changes the enti
 
 ## Installation
 
+### Method 1: Via ComfyUI Manager (Recommended)
+The easiest way to install.
+1. Open **ComfyUI Manager**.
+2. Click **"Install Custom Nodes"**.
+3. Search for: `Persona Director` (or `ComfyUI-Persona-Director`).
+4. Click **Install**.
+5. **Restart** ComfyUI.
+
+*(Dependencies like `openai` will be installed automatically if you use the Manager.)*
+
+### Method 2: Manual Installation
+Use this if you prefer the terminal or want to contribute to the code.
+
 1.  **Navigate to your ComfyUI custom nodes directory:**
     ```bash
     cd ComfyUI/custom_nodes
