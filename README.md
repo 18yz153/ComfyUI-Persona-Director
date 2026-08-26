@@ -1,10 +1,10 @@
 # ComfyUI-Persona-Director
 
-> **The Visual State Machine for Consistent Character Generation.**
+> **The Visual State Machine for Consistent Character Generation** — now for both **tag** (SDXL / Pony) and **natural-language** (DiT: Anima, FLUX, SD3…) models.
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![ComfyUI](https://img.shields.io/badge/ComfyUI-Custom_Node-green)](https://github.com/comfyanonymous/ComfyUI)
-[![Platform](https://img.shields.io/badge/Model-SDXL%20%7C%20Pony-orange)]()
+[![Platform](https://img.shields.io/badge/Model-SDXL%20%7C%20Pony%20%7C%20DiT-orange)]()
 
 ---
 
@@ -18,20 +18,33 @@
 
 ---
 
+## Two Nodes
+
+| Node | Output | For |
+| :--- | :--- | :--- |
+| **AI Director (Tags)** | Danbooru / SDXL tags | SDXL, Pony |
+| **AI Director (NL / DiT)** | Natural language | Anima, FLUX, SD3, and other natural-language DiT models |
+
+Both share one engine — the state schema and prompt style are driven by a `configs/*.json` profile, so you can add your own models or fields without touching code.
+
+---
+
 ## Why This Node?
 
-In standard Stable Diffusion workflows, changing a prompt often changes the entire character (random seed chaos).  
-**Persona Director** solves this by maintaining a **7-Layer Deterministic State Machine**:
+In standard Stable Diffusion workflows, changing a prompt often changes the entire character (random seed chaos).
+**Persona Director** fixes this with a **config-driven deterministic state machine**:
 
-| Layer | Function |
-| :--- | :--- |
-| **Character** | Identity tags (e.g., `hatsune_miku`, `1girl`) are locked. |
-| **Outfit** | Clothes are tracked as a set. Change pose without changing clothes. |
-| **Action** | Updates pose/expression independently. |
-| **Location** | Backgrounds persist until you say "go somewhere else". |
-| **Composition** | Camera angles and framing. |
-| **Style** | Art style consistency. |
-| **JSON State** | All data is saved to `.json`. You can pause and resume days later. |
+- **Identity, outfit, action, location, composition, style** — each is a field in a JSON state. Change the pose without losing the clothes.
+- The field list is **not hardcoded** — it lives in `configs/*.json`, so you can add / rename fields (e.g. `lighting`, `color`, `mood` for natural-language models) without touching code.
+- State is saved to `.json` — pause and resume days later.
+
+### Tool Calling (higher accuracy)
+
+The LLM updates the state via **function calling**: it emits only the fields that change, validated against a JSON schema — no more re-echoing the whole JSON.
+
+- **Capable models** → tool call (faster, more accurate).
+- **Low-capability / local models** without tool support → automatically falls back to JSON echo.
+- Switch manually with the `tool_mode` dropdown: `auto` / `tool` / `json_only`.
 
 ---
 
@@ -57,14 +70,13 @@ Use this if you prefer the terminal or want to contribute to the code.
 
 2.  **Clone this repository:**
     ```bash
-    git clone [https://github.com/YOUR_USERNAME/ComfyUI-Persona-Director.git](https://github.com/YOUR_USERNAME/ComfyUI-Persona-Director.git)
+    git clone https://github.com/18yz153/ComfyUI-Persona-Director.git
     ```
 
 3.  **Install dependencies:**
     ```bash
     pip install openai
     ```
-    *(Note: We use the `openai` library, but it supports Gemini, DeepSeek, Claude, and Local LLM via compatible endpoints.)*
 
 4.  **Restart ComfyUI.**
 
@@ -79,23 +91,30 @@ Use this if you prefer the terminal or want to contribute to the code.
 
 ```json
 {
-    "api_url": "[https://api.openai.com/v1](https://api.openai.com/v1)",
+    "api_url": "https://api.openai.com/v1",
     "api_key": "sk-proj-xxxxxxxxxxxxxxxxxxxxxxxx",
     "model_name": "gpt-4o"
 }
 ```
-**Supported Models / Providers Cheat Sheet**
 
-    OpenAI
-    Google Gemini
-    DeepSeek / Claude (via OpenRouter)
-    Local LLM
+**Supported Providers / Models**
+
+The node speaks the standard **OpenAI-compatible protocol**, so anything that exposes it works out of the box:
+
+| Provider | Notes |
+| :--- | :--- |
+| OpenAI | `gpt-4o`, etc. |
+| Google Gemini | via the OpenAI-compatible `/openai/` endpoint |
+| DeepSeek / Claude | via OpenRouter (or compatible endpoints) |
+| **LM Studio / Local LLM** | `api_url = http://localhost:1234/v1` — also Ollama, vLLM |
+
+For local / DiT natural-language work, point the **AI Director (NL / DiT)** node at your local endpoint with the `nl.json` profile.
 
 ---
 
 ## Quick Start (Drag & Drop)
 
-**Get started immediately!** Download the image below (Save As...), then **drag and drop it directly into ComfyUI**.  
+**Get started immediately!** Download the image below (Save As...), then **drag and drop it directly into ComfyUI**.
 It contains the full node setup and metadata.
 
 <img src="assets/workflow_basic.png" width="600" alt="Basic Workflow">
@@ -114,7 +133,7 @@ It contains the full node setup and metadata.
 * **Generate**: The node creates `New_Character.json`.
 
 ### 2. Update the Scene (The Magic)
-* **Selector**: **Keep it on `Create New (Smart)`** (It automatically detects existing files). **Or, refresh comfyUI and select the json`** 
+* **Selector**: **Keep it on `Create New (Smart)`** (It automatically detects existing files). **Or, refresh comfyUI and select the json**
 * **Instruction**: *"She is crouching on a rooftop."*
 * **Result**: The `blue neon jacket` and `katana` are preserved. Only the pose and background change.
 
@@ -123,6 +142,14 @@ It contains the full node setup and metadata.
 * **Environment**: *"It starts raining."* -> AI adds `rain` to location.
 * **Tag Injection**: For precise control, use the `tag:(...)` syntax to force specific tags into the prompt.
     * Input: *"She is eating. tag:(hamburger, open_mouth)"*
+
+### 4. Natural-Language (DiT) Models
+* Pick the **AI Director (NL / DiT)** node and the `nl.json` profile — same workflow, prose output for Anima / FLUX / SD3 and other natural-language models.
+
+### 5. Tool Mode
+* Leave `tool_mode` on `auto` for normal use.
+* Set it to `json_only` for models that do not support function calling (many small / older local models).
+
 ---
 
 ## Troubleshooting
@@ -133,10 +160,13 @@ It contains the full node setup and metadata.
 * **Error: 401 Unauthorized**: Check your API Key.
 * **"The wind blows her hat away" but the hat stays?**:
     * The model prioritizes consistency. Try being more explicit: *"The wind blows her hat away, removing it."*
+* **Local model (LM Studio / Ollama) misbehaves on tool calls?**
+    * Tool calling is only reliable for models that support it. Set `tool_mode = json_only` to force the JSON-echo path.
+    * `tool_choice` is sent as a plain string (LM Studio rejects the object form) — already handled by the node.
 
 ---
 
 ## License
 
-**Apache 2.0 License**.  
+**Apache 2.0 License**.
 Free for commercial and non-commercial use.
