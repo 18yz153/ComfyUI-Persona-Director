@@ -42,14 +42,21 @@ class StateSchema:
 
     def to_json_schema(self):
         """JSON Schema for the tool-call arguments. Fields are optional so the
-        model can return only the fields it changed (no full-state echo)."""
+        model can return only the fields it changed (no full-state echo).
+        Exception: 'positive' is regenerated every call, so it is required."""
         properties = {}
+        required = []
         for f in self.fields:
             if f["enum"]:
                 properties[f["key"]] = {"type": "string", "enum": f["enum"]}
             else:
                 properties[f["key"]] = {"type": "string"}
-        return {"type": "object", "properties": properties}
+            if f["key"] == "positive":
+                required.append(f["key"])
+        schema = {"type": "object", "properties": properties}
+        if required:
+            schema["required"] = required
+        return schema
 
     def to_state_structure_text(self):
         lines = []

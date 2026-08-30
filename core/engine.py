@@ -127,6 +127,11 @@ class PersonaDirectorEngine:
             backend = LLMBackend(api_cfg["api_url"], api_cfg["api_key"], api_cfg["model_name"])
 
             system_prompt = self.build_system_prompt()
+
+            # Regenerate the positive prompt each call: never send the stale one to the LLM.
+            if "positive" in self.schema.by_key:
+                current_state["positive"] = ""
+
             user_message = self._build_user_message(is_new, current_state, instr)
 
             parsed = backend.complete(

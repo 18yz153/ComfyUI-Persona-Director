@@ -11,7 +11,11 @@ def render_positive(state, schema, prompt_cfg):
     mode = prompt_cfg.get("render_mode", "tags")
     prefix = prompt_cfg.get("prefix", "") or ""
     suffix = prompt_cfg.get("suffix", "") or ""
-
+    
+    if "positive" in schema.by_key:
+        v = str(state.get("positive", "") or "").strip()
+        if v:
+            return "%s, %s" % (prefix, v)
     values = []
     for key in schema.renderable_keys:
         v = state.get(key)
