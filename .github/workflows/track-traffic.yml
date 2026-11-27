@@ -15,6 +15,18 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Switch to traffic-stats branch
+        run: |
+          if git ls-remote --exit-code --heads origin traffic-stats >/dev/null 2>&1; then
+            git fetch origin traffic-stats:traffic-stats
+            git checkout traffic-stats
+          else
+            git checkout --orphan traffic-stats
+            git rm -rf . >/dev/null 2>&1 || true
+          fi
 
       - name: Fetch traffic and update CSV
         env:
@@ -52,8 +64,7 @@ jobs:
           forks = repo_info.get("forks_count", 0)
 
           daily = {}
-          csv_path = "stats/traffic.csv"
-          os.makedirs("stats", exist_ok=True)
+          csv_path = "traffic.csv"
           if os.path.exists(csv_path):
               with open(csv_path, "r", newline="", encoding="utf-8") as f:
                   for row in csv.DictReader(f):
@@ -84,12 +95,12 @@ jobs:
                   writer.writerow(daily[d])
           EOF
 
-      - name: Commit updated stats
+      - name: Commit updated stats to traffic-stats branch
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add stats/traffic.csv
+          git add traffic.csv
           if ! git diff --cached --quiet; then
             git commit -m "chore: update daily traffic stats"
-            git push
+            git push origin traffic-stats
           fi
