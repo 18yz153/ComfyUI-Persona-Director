@@ -1,7 +1,7 @@
 [project]
 name = "persona-director"
 description = "A visual state machine for consistent character generation. It intelligently maintains character identity, outfits, and locations across multiple generations using LLM-driven state management."
-version = "1.0.0"
+version = "1.1.0"
 license = {file = "LICENSE"} 
 # classifiers = [
 #     # For OS-independent nodes (works on all operating systems)
