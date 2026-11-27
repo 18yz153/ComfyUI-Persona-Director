@@ -172,6 +172,8 @@ It contains the full node setup and metadata.
 
 ---
 
+> **Enjoying Persona Director?** If this node saved you time, consider giving it a ⭐ on GitHub — it helps other ComfyUI users discover the project!
+
 ## License
 
 **Apache 2.0 License**.
