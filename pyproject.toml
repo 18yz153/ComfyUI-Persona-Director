@@ -29,7 +29,7 @@ Documentation = "https://github.com/18yz153/ComfyUI-Persona-Director/wiki"
 "Bug Tracker" = "https://github.com/18yz153/ComfyUI-Persona-Director/issues"
 
 [tool.comfy]
-PublisherId = ""
+PublisherId = "yifanz27"
 DisplayName = "ComfyUI-Persona-Director"
 Icon = ""
 includes = [] 
