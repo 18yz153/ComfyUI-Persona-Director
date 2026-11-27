@@ -6,3 +6,6 @@ test.py
 config.json
 personas/*.json
 !personas/example.json
+assets/ComfyUI_*.png
+assets/*-*-*-*-*.png
+assets/raw/

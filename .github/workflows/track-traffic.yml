@@ -1,0 +1,95 @@
+name: Track GitHub Traffic
+
+on:
+  schedule:
+    # Run daily at 02:00 UTC (10:00 UTC+8)
+    - cron: "0 2 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  track:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Fetch traffic and update CSV
+        env:
+          GH_TOKEN: ${{ secrets.TRAFFIC_TOKEN }}
+          REPO: ${{ github.repository }}
+        run: |
+          python3 - << 'EOF'
+          import csv
+          import json
+          import os
+          import urllib.request
+          from datetime import datetime, timezone
+
+          token = os.environ.get("GH_TOKEN", "").strip()
+          repo = os.environ["REPO"]
+          if not token:
+              raise SystemExit("Missing TRAFFIC_TOKEN secret. Add a PAT with 'repo' scope in Repository Secrets.")
+
+          headers = {
+              "Authorization": f"Bearer {token}",
+              "Accept": "application/vnd.github+json",
+              "X-GitHub-Api-Version": "2022-11-28",
+          }
+
+          def get_json(path):
+              req = urllib.request.Request(f"https://api.github.com/repos/{repo}{path}", headers=headers)
+              with urllib.request.urlopen(req) as resp:
+                  return json.loads(resp.read().decode("utf-8"))
+
+          repo_info = get_json("")
+          clones = get_json("/traffic/clones")
+          views = get_json("/traffic/views")
+
+          stars = repo_info.get("stargazers_count", 0)
+          forks = repo_info.get("forks_count", 0)
+
+          daily = {}
+          csv_path = "stats/traffic.csv"
+          os.makedirs("stats", exist_ok=True)
+          if os.path.exists(csv_path):
+              with open(csv_path, "r", newline="", encoding="utf-8") as f:
+                  for row in csv.DictReader(f):
+                      daily[row["date"]] = row
+
+          for item in clones.get("clones", []):
+              d = item["timestamp"][:10]
+              entry = daily.setdefault(d, {"date": d, "clones": "0", "unique_cloners": "0", "views": "0", "unique_visitors": "0", "stars": "", "forks": ""})
+              entry["clones"] = str(item["count"])
+              entry["unique_cloners"] = str(item["uniques"])
+
+          for item in views.get("views", []):
+              d = item["timestamp"][:10]
+              entry = daily.setdefault(d, {"date": d, "clones": "0", "unique_cloners": "0", "views": "0", "unique_visitors": "0", "stars": "", "forks": ""})
+              entry["views"] = str(item["count"])
+              entry["unique_visitors"] = str(item["uniques"])
+
+          today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+          today_entry = daily.setdefault(today, {"date": today, "clones": "0", "unique_cloners": "0", "views": "0", "unique_visitors": "0", "stars": "", "forks": ""})
+          today_entry["stars"] = str(stars)
+          today_entry["forks"] = str(forks)
+
+          fieldnames = ["date", "clones", "unique_cloners", "views", "unique_visitors", "stars", "forks"]
+          with open(csv_path, "w", newline="", encoding="utf-8") as f:
+              writer = csv.DictWriter(f, fieldnames=fieldnames)
+              writer.writeheader()
+              for d in sorted(daily.keys()):
+                  writer.writerow(daily[d])
+          EOF
+
+      - name: Commit updated stats
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add stats/traffic.csv
+          if ! git diff --cached --quiet; then
+            git commit -m "chore: update daily traffic stats"
+            git push
+          fi

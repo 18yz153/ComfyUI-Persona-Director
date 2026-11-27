@@ -10,6 +10,12 @@
 
 ## Demo
 
+### Natural Language (DiT / FLUX / Anima)
+**Incremental state updates via Tool Calling.** *(Swap outfits or scenes without losing details or leaving ghost tags.)*
+
+![Natural Language Demo](assets/demo_nl_comparison.png)
+
+### Tags (SDXL / Pony)
 **Watch consistency in action.** *(The character identity and outfit persist perfectly while the pose changes.)*
 
 ![Demo GIF](assets/demo.gif)
